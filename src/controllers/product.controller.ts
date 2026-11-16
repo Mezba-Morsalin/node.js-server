@@ -7,25 +7,8 @@ const productController = (req: IncomingMessage, res: ServerResponse) => {
   const method = req.method;
 
   if (url === "/products" && method === "GET") {
-    const products = [
-      {
-        id: 1,
-        name: "Sunglasses",
-        price: 600,
-      },
-      {
-        id: 2,
-        name: "Hoodie",
-        price: 850,
-      },
-      {
-        id: 3,
-        name: "Jeans",
-        price: 1200,
-      },
-    ];
 
-    productsServices()
+    const products = productsServices()
 
     res.writeHead(200, { "Content-type": "application/json" });
     res.end(
