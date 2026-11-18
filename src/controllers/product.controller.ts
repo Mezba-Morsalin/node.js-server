@@ -1,10 +1,12 @@
 import type { IncomingMessage, ServerResponse } from "http";
 import { productsServices } from "../service/product.service";
 import type { Type } from "../types/type";
+import { bodyParser } from "../utils/parseBody";
 
 
 
-const productController = (req: IncomingMessage, res: ServerResponse) => {
+
+const productController = async (req: IncomingMessage, res: ServerResponse) => {
   const url = req.url;
   const method = req.method;
 
@@ -32,7 +34,17 @@ const productController = (req: IncomingMessage, res: ServerResponse) => {
       JSON.stringify({ message: "This is Product Root Route", data: product }),
     );
    }
-  
+
+   else if (method === "POST") {
+    const body = await bodyParser(req);
+
+    console.log(body);
+    res.writeHead(201, { "Content-type": "application/json" });
+    res.end(
+      JSON.stringify({ message: "Product Created Successfully"}),
+    );
+   }
+
   else {
     res.writeHead(404, { "Content-type": "application/json" });
     res.end(JSON.stringify({ message: "This is Not Root Route" }));
