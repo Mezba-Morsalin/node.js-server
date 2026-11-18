@@ -1,17 +1,1 @@
-[
-  {
-    "id": 1,
-    "name": "Sunglasses",
-    "price": 600
-  },
-  {
-    "id": 2,
-    "name": "Hoodie",
-    "price": 850
-  },
-  {
-    "id": 3,
-    "name": "Jeans",
-    "price": 1200
-  }
-]
+[{"id":1,"name":"Sunglasses","price":600},{"id":2,"name":"Hoodie","price":850},{"id":3,"name":"Jeans","price":1200},{"id":1795033321103,"name":"Camera","price":20000}]
