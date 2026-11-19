@@ -55,6 +55,34 @@ const productController = async (req: IncomingMessage, res: ServerResponse) => {
     );
    }
 
+   else if (method === "PUT" && id !== null) {
+    const body = await bodyParser(req);
+    const products = productsServices();
+
+    const index = products.findIndex((p :Type) => p.id === id)
+
+    if (index < 0 ) {
+      res.writeHead(404, { "Content-type": "application/json" });
+   return res.end(
+      JSON.stringify({ message: "Product Route Not Found"}),
+    );
+    }
+
+    products[index] = {
+      id : products[index].id,
+      ...body
+    }
+
+
+    createProducts(products)
+
+    res.writeHead(200, { "Content-type": "application/json" });
+    res.end(
+      JSON.stringify({ message: "Product Updated Successfully", 
+        data : products[index]}),
+    );
+
+   }
   else {
     res.writeHead(404, { "Content-type": "application/json" });
     res.end(JSON.stringify({ message: "This is Not Root Route" }));
