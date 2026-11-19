@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from "http";
 import {  createProducts, productsServices } from "../service/product.service";
 import type { Type } from "../types/type";
 import { bodyParser } from "../utils/parseBody";
+import { sendResponse } from "../utils/sendResponse";
 
 
 
@@ -17,33 +18,33 @@ const productController = async (req: IncomingMessage, res: ServerResponse) => {
 
   if (url === "/products" && method === "GET") {
 
-    const products = productsServices()
-
-    res.writeHead(200, { "Content-type": "application/json" });
-    res.end(
-      JSON.stringify({ message: "This is Product Root Route", data: products }),
-    );
+    try {
+        const products = productsServices()
+      sendResponse(res, true, 200, "This is Product Root Route", products)
+    } catch (error) {
+      sendResponse(res, false, 404, "Internal Server Error")
+    }
   } 
+
    else if (method === "GET" && id !== null) {
-    const products = productsServices()
+    try {
+      const products = productsServices()
 
     const product = products.find((p : Type) => p.id === id)
 
     if (!product) {
-      res.writeHead(404, { "Content-type": "application/json" });
-   return res.end(
-      JSON.stringify({ message: "Product Route Not Found"}),
-    );
+     return sendResponse(res, false, 404, "Product Not Found")
     }
 
-    res.writeHead(200, { "Content-type": "application/json" });
-    res.end(
-      JSON.stringify({ message: "This is Product Root Route", data: product }),
-    );
+    sendResponse(res, true, 200, "This is Product Root Route", product)
+    } catch (error) {
+      sendResponse(res, false, 404, "Internal Server Error")
+    }
    }
 
    else if (method === "POST" && url === "/products") {
-    const body = await bodyParser(req);
+    try {
+      const body = await bodyParser(req);
 
     const newProduct = {
       id : Date.now(),
@@ -56,23 +57,21 @@ const productController = async (req: IncomingMessage, res: ServerResponse) => {
 
     createProducts(products)
 
-    res.writeHead(201, { "Content-type": "application/json" });
-    res.end(
-      JSON.stringify({ message: "Product Created Successfully", data : newProduct}),
-    );
+    sendResponse(res, true, 200, "Product Created Successfully", newProduct)
+    } catch (error) {
+      sendResponse(res, false, 404, "Internal Server Error")
+    }
    }
 
    else if (method === "PUT" && id !== null) {
-    const body = await bodyParser(req);
+    try {
+      const body = await bodyParser(req);
     const products = productsServices();
 
     const index = products.findIndex((p :Type) => p.id === id)
 
     if (index < 0 ) {
-      res.writeHead(404, { "Content-type": "application/json" });
-   return res.end(
-      JSON.stringify({ message: "Product Route Not Found"}),
-    );
+      sendResponse(res, false, 404, "Failed to Update Product")
     }
 
     products[index] = {
@@ -83,35 +82,32 @@ const productController = async (req: IncomingMessage, res: ServerResponse) => {
 
     createProducts(products)
 
-    res.writeHead(200, { "Content-type": "application/json" });
-    res.end(
-      JSON.stringify({ message: "Product Updated Successfully", 
-        data : products[index]}),
-    );
+    sendResponse(res, true, 200, "Product Created Successfully", products[index])
+    } catch (error) {
+      sendResponse(res, false, 404, "Internal Server Error")
+    }
    }
+
    else if (method === "DELETE" && id !== null) {
-    const products = productsServices();
+    try {
+      const products = productsServices();
     const index = products.findIndex((p :Type) => p.id === id)
 
     if (index < 0 ) {
-      res.writeHead(404, { "Content-type": "application/json" });
-   return res.end(
-      JSON.stringify({ message: "Product Route Not Found"}),
-    );
+      sendResponse(res, false, 404, "Product Not Found")
     }
 
     products.splice(index, 1)
 
     createProducts(products)
 
-    res.writeHead(200, { "Content-type": "application/json" });
-    res.end(
-      JSON.stringify({ message: "Product Deleted Successfully"}),
-    );
+    sendResponse(res, true, 200, "Product Deleted Successfully")
+    } catch (error) {
+      sendResponse(res, false, 404, "Internal Server Error")
+    }
    }
   else {
-    res.writeHead(404, { "Content-type": "application/json" });
-    res.end(JSON.stringify({ message: "This is Not Root Route" }));
+    sendResponse(res, false, 404, "Root Not Found")
   }
 };
 

@@ -9,6 +9,10 @@ export const bodyParser = (req : IncomingMessage) : Promise <any> => {
 
         req.on("end", () => {
             try {
+                if (!body.trim()) {
+                    resolve(null);
+                    return;
+                }
                 resolve(JSON.parse(body))
             } catch (error) {
                 reject(error)
